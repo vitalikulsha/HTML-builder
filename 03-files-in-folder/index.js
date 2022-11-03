@@ -2,10 +2,9 @@ const path = require('path');
 const fs = require('fs');
 const folderPath = path.join(__dirname, 'secret-folder');
 
-fs.readdir(folderPath, (err, files) => {
+fs.readdir(folderPath, { withFileTypes: true }, (err, files) => {
   if (err) throw err;
-  files = files.map(file => path.join(folderPath, file))
-    .filter(file => fs.lstatSync(file).isFile());
+  files = files.filter(file => file.isFile()).map(file => path.join(folderPath, file.name));
   for (let file of files) {
     const fileExt = path.extname(file);
     const fileName = path.basename(file).slice(0, -fileExt.length);
