@@ -9,19 +9,35 @@ fs.mkdir(
   }
 );
 
+
 fs.readdir(
-  path.join(__dirname, 'files'),
-  (err, files) => {
+  path.join(__dirname, 'files-copy'),
+  async (err, files) => {
     if (err) throw err;
     for (let file of files) {
-      fs.copyFile(
-        path.join(__dirname, 'files', file),
+      await fs.promises.rm(
         path.join(__dirname, 'files-copy', file),
-        err => {
+        { recursive: true, force: true },
+        (err) => {
           if (err) throw err;
-        })
+        });
     };
-  });
+    copyFiles()
+  }
+);
 
-
-
+function copyFiles() {
+  fs.readdir(
+    path.join(__dirname, 'files'),
+    (err, files) => {
+      if (err) throw err;
+      for (let file of files) {
+        fs.copyFile(
+          path.join(__dirname, 'files', file),
+          path.join(__dirname, 'files-copy', file),
+          err => {
+            if (err) throw err;
+          })
+      };
+    });
+}
